@@ -1,0 +1,6 @@
+.venv/
+.env
+*.bin
+__pycache__/
+.mypy_cache/
+.claude
