@@ -289,12 +289,21 @@ def main():
             live_status, alert_info = resolve_status(alert_data, CITY)
 
             # When live is quiet, supplement with history to catch alerts
-            # that disappeared from the live feed before cat-13 was issued
+            # that disappeared from the live feed before cat-13 was issued.
+            # When live returns ALERT, also check history - the live feed
+            # sometimes omits the category for PRE_WARNING events, causing
+            # them to be misclassified as ALERT until the live feed clears.
             if live_status == AlertStatus.NO_ALERTS:
                 hist_status, hist_info = fetch_history_status(
                     session, CITY
                 )
                 if hist_status != AlertStatus.NO_ALERTS:
+                    live_status, alert_info = hist_status, hist_info
+            elif live_status == AlertStatus.ALERT:
+                hist_status, hist_info = fetch_history_status(
+                    session, CITY
+                )
+                if hist_status == AlertStatus.PRE_WARNING:
                     live_status, alert_info = hist_status, hist_info
 
             new_status, resolved_until = _compute_new_status(
