@@ -64,7 +64,6 @@ CAT_PRE_WARNING = 14
 CAT_EVENT_ENDED = 13
 
 
-
 def fetch_alerts(session: requests.Session) -> dict | None:
     """
     Fetch current active alerts from the API.
