@@ -58,34 +58,13 @@ bash particle/scripts/monitor.sh
 particle serial monitor --follow
 ```
 
-### Publish events directly (same path as the Pi)
+### Simulate a status (same path as the Pi)
 
 ```bash
-particle publish alert_status "pre_warning"
-particle publish alert_status "alert"
-particle publish alert_status "resolved"
-particle publish alert_status "no_alerts"
-```
-
-### Inject states via cloud function
-
-```bash
-particle call $PARTICLE_DEVICE_ID simulate prewarning
-particle call $PARTICLE_DEVICE_ID simulate alert
-particle call $PARTICLE_DEVICE_ID simulate resolved
-particle call $PARTICLE_DEVICE_ID simulate clear
-```
-
-### Inject via serial monitor
-
-Type a command and press Enter while `particle serial monitor --follow`
-is open:
-
-```
-prewarning
-alert
-resolved
-clear
+bash particle/scripts/simulate.sh pre_warning
+bash particle/scripts/simulate.sh alert
+bash particle/scripts/simulate.sh resolved
+bash particle/scripts/simulate.sh no_alerts
 ```
 
 > **Tip:** temporarily set `RESOLVED_DURATION_MS = 15000` in
