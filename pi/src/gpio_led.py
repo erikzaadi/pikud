@@ -47,8 +47,15 @@ class AlertLED:
             return
 
         try:
-            self._led = RGBLED(red=PIN_RED, green=PIN_GREEN, blue=PIN_BLUE,
-                               pin_factory=PiGPIOFactory())
+            factory = PiGPIOFactory()
+            self._led = RGBLED(
+                red=PIN_RED, green=PIN_GREEN, blue=PIN_BLUE,
+                pin_factory=factory,
+            )
+            # Pre-initialize PWM on all channels so pigpio doesn't raise
+            # 'GPIO is not in use for PWM' on the first off() call.
+            for pin_num in (PIN_RED, PIN_GREEN, PIN_BLUE):
+                factory.connection.set_PWM_dutycycle(pin_num, 0)
         except Exception as e:
             logging.warning(f"GPIO LED init failed: {e}")
             return
