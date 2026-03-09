@@ -92,12 +92,21 @@ bash pi/scripts/deploy.sh
 ## Testing the LED without a real alert
 
 ```bash
-# Install venv if needed
-pi/src/.venv/bin/python pi/src/test_led.py
+bash pi/scripts/test_led.sh
 ```
 
-Cycles through all four states (yellow → red → blue → off) for 4
-seconds each.
+The script automatically stops the service before the test and restarts it
+afterwards if it was running.
+
+Or directly on the Pi (stop the service first to avoid a pigpio conflict):
+
+```bash
+sudo systemctl stop pikud
+cd ~/pikud/pi/src && .venv/bin/python test_led.py
+sudo systemctl start pikud
+```
+
+Cycles through all four states (yellow, red, blue, off) for 4 seconds each.
 
 ---
 
