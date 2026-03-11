@@ -66,11 +66,39 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable "$SERVICE_NAME"
+sudo systemctl enable --now "$SERVICE_NAME"
+
+echo "==> Installing WiFi watchdog"
+WATCHDOG_SCRIPT="/usr/local/bin/wifi_watchdog.sh"
+sudo cp "${REPO_ROOT}/pi/scripts/wifi_watchdog.sh" "$WATCHDOG_SCRIPT"
+sudo chmod +x "$WATCHDOG_SCRIPT"
+
+sudo tee /etc/systemd/system/wifi-watchdog.service > /dev/null <<EOF
+[Unit]
+Description=WiFi watchdog - restart wlan0 if gateway unreachable
+
+[Service]
+Type=oneshot
+ExecStart=${WATCHDOG_SCRIPT}
+EOF
+
+sudo tee /etc/systemd/system/wifi-watchdog.timer > /dev/null <<EOF
+[Unit]
+Description=Run WiFi watchdog every 2 minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=2min
+
+[Install]
+WantedBy=timers.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now wifi-watchdog.timer
 
 echo ""
 echo "Done! Next steps:"
 echo "  1. Edit .env with your Particle credentials and PI_HOST"
 echo "  2. Set CITY in .env (default: תל אביב)"
-echo "  3. sudo systemctl start $SERVICE_NAME"
-echo "  4. journalctl -u $SERVICE_NAME -f"
+echo "  3. journalctl -u $SERVICE_NAME -f"

@@ -89,6 +89,23 @@ bash pi/scripts/deploy.sh
 
 ---
 
+## WiFi watchdog
+
+The install script sets up a systemd timer that pings the default gateway
+every 2 minutes and bounces `wlan0` if it's unreachable. Logs go to syslog:
+
+```bash
+bash pi/scripts/watchdog_logs.sh
+```
+
+To check the timer status:
+
+```bash
+systemctl status wifi-watchdog.timer
+```
+
+---
+
 ## Testing the LED without a real alert
 
 ```bash

@@ -75,7 +75,13 @@ def fetch_alerts(session: requests.Session) -> dict | None:
     text = resp.content.decode("utf-8-sig").strip()
     if not text:
         return None
-    return json.loads(text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        logging.warning(
+            f"Unexpected response from alerts API: {text[:80]!r}"
+        )
+        return None
 
 
 def _parse_history_entries(resp: requests.Response) -> list:
